@@ -1,17 +1,29 @@
-#pragma once
+ï»¿#pragma once
 #include "Matrix4x4.h"
 
-// X²‰ñ“]s—ñ
+// Xè»¸å›è»¢è¡Œåˆ—
 Matrix4x4 MakeRotateXMatrix(float radius);
-// Y²‰ñ“]s—ñ
+// Yè»¸å›è»¢è¡Œåˆ—
 Matrix4x4 MakeRotateYMatrix(float radius);
-// Z²‰ñ“]s—ñ
+// Zè»¸å›è»¢è¡Œåˆ—
 Matrix4x4 MakeRotateZMatrix(float radius);
 
-// s—ñ‚ÌÏ
+// å¹³è¡Œç§»å‹•è¡Œåˆ—
+Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
+
+// æ‹¡å¤§ç¸®å°è¡Œåˆ—
+Matrix4x4 MakeScaleMatrix(const Vector3& scale);
+
+// åº§æ¨™å¤‰æ›
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+
+// 3æ¬¡å…ƒã‚¢ãƒ•ã‚£ãƒ³å¤‰æ›è¡Œåˆ—
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+
+// è¡Œåˆ—ã®ç©
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 
-// 4x4s—ñ‚Ì”’l•\¦
+// 4x4è¡Œåˆ—ã®æ•°å€¤è¡¨ç¤º
 static const int kRowWidth = 60;
 static const int kColumnHeight = 20;
 void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);
