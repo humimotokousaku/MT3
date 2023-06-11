@@ -1,6 +1,7 @@
 #include <Novice.h>
 #include "MyMatrix.h"
 #include <stdint.h>
+#include "ImGuiManager.h"
 
 const char kWindowTitle[] = "LE2B_22_フミモト_コウサク";
 
@@ -15,21 +16,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = { 0 };
 
 	// 宣言
-	Vector3 v1{ 1.2f,-3.9f,2.5f };
-	Vector3 v2{ 2.8f,0.4f,-1.3f };
-	Vector3 cross = Cross(v1, v2);
-
-	Vector3 cameraPosition = { 0,0,-5 };
+	Vector3 cameraTranslate = { 0.0f,1.9f,-6.49f };
+	Vector3 cameraRotate = { 0.26f,0.0f,0.0f };
 
 	Vector3 rotate{};
 	Vector3 translate{};
 
-	Vector3 kLocalVertice[3];
-	kLocalVertice[0] = { -0.5f,-0.5f,0.0f };
-	kLocalVertice[1] = { 0.0f,0.5f, 0.0f};
-	kLocalVertice[2] = { 0.5f,-0.5f, 0.0f};
 
-	Vector3 screenVertices[3];
+	Sphere sphere = { 0.0f,0.0f, 0.0f, 1.0f };
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -43,30 +38,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		rotate.y += 0.01f;
-		if (keys[DIK_W]) {
-			translate.z += 0.1f;
-		}
-		if (keys[DIK_S]) {
-			translate.z -= 0.1f;
-		}
-		if (keys[DIK_A]) {
-			translate.x -= 0.1f;
-		}
-		if (keys[DIK_D]) {
-			translate.x += 0.1f;
-		}
 
+		// カメラ設定
 		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotate, translate);
-		Matrix4x4 cameraMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, cameraPosition);
+		Matrix4x4 cameraMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraTranslate);
 		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
 		Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(1280) / float(720), 0.1f, 100.0f);
 		Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, 1280.0f, 720.0f, 0.0f, 1.0f);
-		for (uint32_t i = 0; i < 3; ++i) {
-			Vector3 ndcVertex = Transform(kLocalVertice[i], worldViewProjectionMatrix);
-			screenVertices[i] = Transform(ndcVertex, viewportMatrix);
-		}
+
+		ImGui::Begin("Window");
+		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+		ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
+		ImGui::DragFloat3("SphereRadius", &sphere.radius, 0.01f);
+		ImGui::End();
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -74,11 +61,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
-		Novice::DrawTriangle(
-			int(screenVertices[0].x), int(screenVertices[0].y), int(screenVertices[1].x), int(screenVertices[1].y),
-			int(screenVertices[2].x), int(screenVertices[2].y), RED, kFillModeSolid
-		);
-		VectorScreenPrintf(0,0,cross,"cross");
+		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
+		DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, BLACK);
 
 		///
 		/// ↑描画処理ここまで

@@ -2,6 +2,11 @@
 #include "Matrix4x4.h"
 #include "Vector3.h"
 
+struct Sphere {
+	Vector3 center;
+	float radius;
+};
+
 // X軸回転行列
 Matrix4x4 MakeRotateXMatrix(float radian);
 
@@ -19,9 +24,11 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 // 座標変換
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
+// 加算
+Vector3 Add(const Vector3& v1, const Vector3& v2);
+
 // 行列の積
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
-
 
 // 逆行列
 Matrix4x4 Inverse(const Matrix4x4& m);
@@ -48,9 +55,16 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 // cross積
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
-// 4x4行列の数値表示
+// グリッド
+void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
+
+// 球体
+void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, unsigned int color);
+
+
 static const int kRowWidth = 60;
 static const int kColumnHeight = 20;
+// 4x4行列の数値表示
 void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);
 // 三次元ベクトルの数値表示
 void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
