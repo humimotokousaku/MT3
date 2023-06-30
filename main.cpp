@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "MyMatrix.h"
 #include "Collision.h"
+#include "Segment.h"
 #include "ImGuiManager.h"
 
 const char kWindowTitle[] = "LE2B_22_フミモト_コウサク";
@@ -29,15 +30,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
 	Vector3 closestPoint = ClosestPoint(point, segment);
 
-	Sphere sphere1{ point,1.0f }; // 1mの球を描画
 	Sphere sphere2{ closestPoint,1.0f };
 
-	float inputFloat3[4][3] = {
-		{sphere1.center.x,sphere1.center.y,sphere1.center.z},
-		{sphere1.radius},
-		{sphere2.center.x,sphere2.center.y,sphere2.center.z},
-		{sphere2.radius}
-	};
+	Plane plane{ { 0.0f, 2.0f, 0.0f }, 1.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -53,7 +48,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		// 当たり判定
-		if (!IsCollision(sphere1, sphere2)) {
+		if (!IsCollision(sphere2,plane)) {
 			sphere2.color = WHITE;
 		}
 		else {
@@ -69,10 +64,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, 1280.0f, 720.0f, 0.0f, 1.0f);
 
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("sphere1.center", &sphere1.center.x, 0.01f);
-		ImGui::DragFloat("sphere1.radius", &sphere1.radius, 0.01f);
-		ImGui::DragFloat3("sphere2.center", &sphere2.center.x, 0.01f);
-		ImGui::DragFloat("sphere2.radius", &sphere2.radius, 0.01f);
+		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+		ImGui::DragFloat3("Sphere.Center", &sphere2.center.x, 0.01f);
+		ImGui::DragFloat("Sphere.Radius", &sphere2.radius, 0.01f);
+		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
+		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
+		plane.normal = Normalize(plane.normal);
 		ImGui::End();
 
 		///
@@ -83,8 +81,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
-		DrawSphere(sphere1, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		DrawSphere(sphere2, worldViewProjectionMatrix, viewportMatrix, sphere2.color);
+		DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで

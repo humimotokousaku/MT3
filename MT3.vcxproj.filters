@@ -35,13 +35,13 @@
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix4x4.cpp">
-      <Filter>KamataEngine</Filter>
-    </ClCompile>
     <ClCompile Include="MyMatrix.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,5 +116,10 @@
     <ClInclude Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.h" />
     <ClInclude Include="MyMatrix.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="Segment.h" />
+    <ClInclude Include="Plane.h" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 ﻿#include "Collision.h"
+#include "MyMatrix.h"
 #define _USE_MATH_DEFINES
+#include <math.h>
 
 bool IsCollision(const Sphere& s1, const Sphere& s2) {
 	// 二つの球体の中心点間の距離を求める
@@ -19,3 +21,13 @@ bool IsCollision(const Sphere& s1, const Sphere& s2) {
 		return true;
 	}
 }
+
+bool IsCollision(const Sphere& sphere, const Plane& plane) {
+	float distance = fabs(Dot(plane.normal, sphere.center) - plane.distance);
+	if (distance >= sphere.radius) {
+		return false;
+	}
+	else if (distance <= sphere.radius) {
+		return true;
+	}
+};

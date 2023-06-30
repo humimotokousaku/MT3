@@ -1,4 +1,6 @@
 ﻿#include "MyMatrix.h"
+#include "Sphere.h"
+#include "Segment.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "ImGuiManager.h"
@@ -459,6 +461,20 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2) {
 	return { v1.y * v2.z - v1.z * v2.y,v1.z * v2.x - v1.x * v2.z,v1.x * v2.y - v1.y * v2.x };
 }
 
+// 正射影ベクトル
+Vector3 Project(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result = Multiply(Normalize(v2),Dot(v1, Normalize(v2)));
+	return result;
+}
+
+// 最近接点
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment) {
+	Vector3 cp;
+	cp = Project(Subtract(point, segment.origin), segment.diff);
+	return Add(segment.origin, cp);
+}
+
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix) {
 	const float kGridHalfWidth = 2.0f;
 	const uint32_t kSubdivision = 10;
@@ -571,18 +587,33 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 	}
 }
 
-// 正射影ベクトル
-Vector3 Project(const Vector3& v1, const Vector3& v2) {
-	Vector3 result;
-	result = Multiply(Normalize(v2),Dot(v1, Normalize(v2)));
-	return result;
+Vector3 Perpendicular(const Vector3& vector) {
+	if (vector.x != 0.0f || vector.y != 0.0f) {
+		return { -vector.y,vector.x,0.0f };
+	}
+	return { 0.0f,-vector.z,vector.y };
 }
 
-// 最近接点
-Vector3 ClosestPoint(const Vector3& point, const Segment& segment) {
-	Vector3 cp;
-	cp = Project(Subtract(point, segment.origin), segment.diff);
-	return Add(segment.origin, cp);
+void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix,const Matrix4x4& viewportMatrix, uint32_t color) {
+	Vector3 center = Multiply(plane.normal, plane.distance);
+	Vector3 perpendiculars[4];
+	perpendiculars[0] = Normalize(Perpendicular(plane.normal));
+	perpendiculars[1] = { -perpendiculars[0].x, -perpendiculars[0].y,-perpendiculars[0].z };
+	perpendiculars[2] = Cross(plane.normal, perpendiculars[0]);
+	perpendiculars[3] = { -perpendiculars[2].x, -perpendiculars[2].y,-perpendiculars[2].z };
+	
+	Vector3 points[4];
+	for (int32_t index = 0; index < 4; ++index) {
+		Vector3 extend = Multiply(perpendiculars[index], 2.0f);
+		Vector3 point = Add(center, extend);
+		points[index] = Transform(Transform(point, viewProjectionMatrix), viewportMatrix);
+	}
+
+	//線を引く
+	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[3].x), int(points[3].y), color);
+	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[2].x), int(points[2].y), color);
+	Novice::DrawLine(int(points[2].x), int(points[2].y), int(points[0].x), int(points[0].y), color);
+	Novice::DrawLine(int(points[3].x), int(points[3].y), int(points[1].x), int(points[1].y), color);
 }
 
 // 4x4行列の数値表示

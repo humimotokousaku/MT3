@@ -108,8 +108,8 @@
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="MyMatrix.cpp" />
+    <ClCompile Include="Plane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\math\Matrix4x4.h" />
@@ -139,7 +139,12 @@
     <ClInclude Include="C:\KamataEngine\DirectXGame\scene\GameScene.h" />
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="MyMatrix.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Segment.h" />
+    <ClInclude Include="Sphere.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

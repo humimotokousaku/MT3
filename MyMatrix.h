@@ -1,27 +1,10 @@
 ﻿#pragma once
 #include "Matrix4x4.h"
 #include "Vector3.h"
-
-struct Sphere {
-	Vector3 center;
-	float radius;
-	unsigned int color;
-};
-
-struct Line {
-	Vector3 origin;	//!< 始点
-	Vector3 diff;	//!< 終点への差分ベクトル
-};
-
-struct Ray {
-	Vector3 origin;	//!< 始点
-	Vector3 diff;	//!< 終点への差分ベクトル
-};
-
-struct Segment {
-	Vector3 origin;	//!< 始点
-	Vector3 diff;	//!< 終点への差分ベクトル
-};
+#include "Segment.h"
+#include "Plane.h"
+#include "Sphere.h"
+#include <stdint.h>
 
 #pragma region 回転行列
 
@@ -93,17 +76,22 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 // cross積
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
+// 正射影ベクトル
+Vector3 Project(const Vector3& v1, const Vector3& v2);
+
+// 最近接点
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
+
 // グリッド
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
 // 球体
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, unsigned int color);
 
-// 正射影ベクトル
-Vector3 Project(const Vector3& v1, const Vector3& v2);
+Vector3 Perpendicular(const Vector3& vector);
 
-// 最近接点
-Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
+// 平面
+void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 
 static const int kRowWidth = 60;
 static const int kColumnHeight = 20;
