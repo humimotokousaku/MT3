@@ -197,6 +197,15 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	return result;
 }
 
+// 積
+Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
+	Vector3 result{
+		(v1.x * v2.x) + (v1.y * v2.x) + (v1.z * v2.x),
+		(v1.x * v2.y) + (v1.y * v2.y) + (v1.z * v2.y),
+		(v1.x * v2.z) + (v1.y * v2.z) + (v1.z * v2.z)
+	};
+	return result;
+};
 
 // 逆行列
 Matrix4x4 Inverse(const Matrix4x4& m) {
@@ -276,6 +285,50 @@ Matrix4x4  MakeIdentity4x4() {
 	return result;
 }
 
+// 減算
+Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	return result;
+}
+
+// スカラー倍
+Vector3 Multiply(const Vector3& v1, float scale) {
+	Vector3 result;
+	result.x = v1.x * scale;
+	result.y = v1.y * scale;
+	result.z = v1.z * scale;
+	return result;
+}
+
+// 内積
+float Dot(const Vector3& v1, const Vector3& v2) {
+	float result;
+	result = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+	return result;
+}
+
+// 長さ(ノルム)
+float Length(const Vector3& v) {
+	float result;
+	result = sqrt(Dot(v, v));
+	return result;
+}
+
+// 正規化
+Vector3 Normalize(const Vector3& v) {
+	Vector3 result{};
+	float length = Length(v);
+	if (length != 0.0f) {
+		result.x = v.x / length;
+		result.y = v.y / length;
+		result.z = v.z / length;
+	}
+	return result;
+}
+
 // 3次元アフィン変換行列
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
 	// 計算結果
@@ -320,9 +373,6 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 
 	return result;
 }
-
-
-
 
 // 透視投影行列
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
@@ -519,6 +569,20 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 
 		}
 	}
+}
+
+// 正射影ベクトル
+Vector3 Project(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result = Multiply(Normalize(v2),Dot(v1, Normalize(v2)));
+	return result;
+}
+
+// 最近接点
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment) {
+	Vector3 cp;
+	cp = Project(Subtract(point, segment.origin), segment.diff);
+	return Add(segment.origin, cp);
 }
 
 // 4x4行列の数値表示

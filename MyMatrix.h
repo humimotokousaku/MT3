@@ -7,6 +7,23 @@ struct Sphere {
 	float radius;
 };
 
+struct Line {
+	Vector3 origin;	//!< 始点
+	Vector3 diff;	//!< 終点への差分ベクトル
+};
+
+struct Ray {
+	Vector3 origin;	//!< 始点
+	Vector3 diff;	//!< 終点への差分ベクトル
+};
+
+struct Segment {
+	Vector3 origin;	//!< 始点
+	Vector3 diff;	//!< 終点への差分ベクトル
+};
+
+#pragma region 回転行列
+
 // X軸回転行列
 Matrix4x4 MakeRotateXMatrix(float radian);
 
@@ -16,16 +33,13 @@ Matrix4x4 MakeRotateYMatrix(float radian);
 // Z軸回転行列
 Matrix4x4 MakeRotateZMatrix(float radian);
 
+#pragma endregion
+
 // 平行移動行列
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
 // 拡大縮小行列
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
-// 座標変換
-Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
-
-// 加算
-Vector3 Add(const Vector3& v1, const Vector3& v2);
 
 // 行列の積
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
@@ -39,9 +53,32 @@ Matrix4x4 Transpose(const Matrix4x4& m);
 // 単位行列の生成
 Matrix4x4  MakeIdentity4x4();
 
+// 座標変換
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+
+// 加算
+Vector3 Add(const Vector3& v1, const Vector3& v2);
+
+// 減算
+Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+
+// 積
+Vector3 Multiply(const Vector3& v1, const Vector3& v2);
+
+// スカラー倍
+Vector3 Multiply(const Vector3& v1, float scale);
+
+// 内積
+float Dot(const Vector3& v1, const Vector3& v2);
+
+// 長さ(ノルム)
+float Length(const Vector3& v);
+
+// 正規化
+Vector3 Normalize(const Vector3& v);
+
 // 3次元アフィン変換行列
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
-
 
 // 透視投影行列
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
@@ -61,6 +98,11 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 // 球体
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, unsigned int color);
 
+// 正射影ベクトル
+Vector3 Project(const Vector3& v1, const Vector3& v2);
+
+// 最近接点
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 
 static const int kRowWidth = 60;
 static const int kColumnHeight = 20;
