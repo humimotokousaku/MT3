@@ -5,6 +5,7 @@
 struct Sphere {
 	Vector3 center;
 	float radius;
+	unsigned int color;
 };
 
 struct Line {
