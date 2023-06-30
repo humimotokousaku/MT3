@@ -34,6 +34,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Plane plane{ { 0.0f, 2.0f, 0.0f }, 1.0f };
 
+	unsigned int color;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -48,11 +50,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		// 当たり判定
-		if (!IsCollision(sphere2,plane)) {
-			sphere2.color = WHITE;
+		if (!IsCollision(segment, plane)) {
+			color = WHITE;
 		}
 		else {
-			sphere2.color = RED;
+			color = RED;
 		}
 
 		// カメラ設定
@@ -63,13 +65,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, 1280.0f, 720.0f, 0.0f, 1.0f);
 
+		Vector3 start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
+		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
+
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
-		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("Sphere.Center", &sphere2.center.x, 0.01f);
-		ImGui::DragFloat("Sphere.Radius", &sphere2.radius, 0.01f);
 		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
 		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
+		ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
+		ImGui::DragFloat("Segment.Diff", &segment.diff.x, 0.01f);
+		ImGui::DragFloat3("Camera.Translate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("Camera.Rotate", &cameraRotate.x, 0.01f);
 		plane.normal = Normalize(plane.normal);
 		ImGui::End();
 
@@ -81,7 +86,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
-		DrawSphere(sphere2, worldViewProjectionMatrix, viewportMatrix, sphere2.color);
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);
 		DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 
 		///
