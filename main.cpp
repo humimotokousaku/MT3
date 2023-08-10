@@ -65,10 +65,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff),worldViewProjectionMatrix), viewportMatrix);
 
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("point", inputFloat3[1], 2.0f);
-		ImGui::DragFloat3("segment.origin", inputFloat3[2], 100.0f);
-		ImGui::DragFloat3("segment.diff", inputFloat3[3], 100.0f);
-		ImGui::DragFloat3("project", inputFloat3[0], 2.0f);
+		ImGui::DragFloat3("point", &point.x, 2.0f);
+		ImGui::DragFloat3("segment.origin", &segment.origin.x, 100.0f);
+		ImGui::DragFloat3("segment.diff", &segment.diff.x, 100.0f);
+		ImGui::DragFloat3("project", &project.x, 2.0f);
 		ImGui::End();
 
 		///
