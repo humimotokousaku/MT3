@@ -24,22 +24,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 rotate{};
 	Vector3 translate{};
 
-	Segment segment{ {-2.0f,-1.0f,0.0f},{3.0f,2.0f,2.0f} };
-	Vector3 point{ -1.5f,0.6f,0.6f };
+	AABB aabb1{
+		{-0.5f, -0.5f, -0.5f},
+		{ 0.0f, 0.0f, 0.0f}
+	};
+	AABB aabb2{
+		{0.2f, 0.2f, 0.2f},
+		{ 1.0f, 1.0f, 1.0f}
+	};
 
-	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
-	Vector3 closestPoint = ClosestPoint(point, segment);
-
-	Sphere sphere2{ closestPoint,1.0f };
-
-	Plane plane{ { 0.0f, 2.0f, 0.0f }, 1.0f };
-
-	Triangle triangle{};
-	triangle.vertices[0] = { -1,0,0 };
-	triangle.vertices[1] = { 0,1,0 };
-	triangle.vertices[2] = { 1,0,0 };
-
-	unsigned int color;
+	uint32_t colorS1 = WHITE;
+	uint32_t colorS2 = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -54,12 +49,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		// 当たり判定
-		if (!IsCollision(triangle, segment)) {
-			color = WHITE;
+		if (IsCollision(aabb1, aabb2)) {
+			colorS1 = RED;
 		}
 		else {
-			color = RED;
+			colorS1 = WHITE;
 		}
 
 		// カメラ設定
@@ -70,17 +64,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, 1280.0f, 720.0f, 0.0f, 1.0f);
 
-		Vector3 start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
-		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
+		ImGui::Begin("Debug");
+		ImGui::DragFloat3("cameraTRa", &cameraTranslate.x, 0.1f, -50.0f, 50.0f);
+		ImGui::DragFloat3("cameraRot", &cameraRotate.x, 0.1f, -50.0f, 50.0f);
 
-		ImGui::Begin("Window");
-		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
-		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
-		ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat("Segment.Diff", &segment.diff.x, 0.01f);
-		ImGui::DragFloat3("Camera.Translate", &cameraTranslate.x, 0.01f);
-		ImGui::DragFloat3("Camera.Rotate", &cameraRotate.x, 0.01f);
-		plane.normal = Normalize(plane.normal);
+		ImGui::DragFloat3("AABB1min", &aabb1.min.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("AABB1max", &aabb1.max.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("AABB2min", &aabb2.min.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("AABB2max", &aabb2.max.x, 0.1f, -1.0f, 5.0f);
 		ImGui::End();
 
 		///
@@ -91,8 +82,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);
-		DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, color);
+		DrawAABB(aabb1, worldViewProjectionMatrix, viewportMatrix, colorS1);
+		DrawAABB(aabb2, worldViewProjectionMatrix, viewportMatrix, colorS2);
 
 		///
 		/// ↑描画処理ここまで
