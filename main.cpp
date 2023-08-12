@@ -34,6 +34,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Plane plane{ { 0.0f, 2.0f, 0.0f }, 1.0f };
 
+	Triangle triangle{};
+	triangle.vertices[0] = { -1,0,0 };
+	triangle.vertices[1] = { 0,1,0 };
+	triangle.vertices[2] = { 1,0,0 };
+
 	unsigned int color;
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -50,7 +55,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		// 当たり判定
-		if (!IsCollision(segment, plane)) {
+		if (!IsCollision(triangle, segment)) {
 			color = WHITE;
 		}
 		else {
@@ -87,7 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);
-		DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, color);
 
 		///
 		/// ↑描画処理ここまで

@@ -4,6 +4,7 @@
 #include "Segment.h"
 #include "Plane.h"
 #include "Sphere.h"
+#include "Triangle.h"
 #include <stdint.h>
 
 #pragma region 回転行列
@@ -92,6 +93,8 @@ Vector3 Perpendicular(const Vector3& vector);
 
 // 平面
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 
 static const int kRowWidth = 60;
 static const int kColumnHeight = 20;
