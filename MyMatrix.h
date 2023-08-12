@@ -7,6 +7,7 @@
 #include "Triangle.h"
 #include <stdint.h>
 
+
 #pragma region 回転行列
 
 // X軸回転行列
