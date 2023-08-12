@@ -72,15 +72,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Vector3 start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
 		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
-
+		plane.normal = Normalize(plane.normal);
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
-		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
+		ImGui::DragFloat3("Triangle.v0", &triangle.vertices[0].x, 0.01f);
+		ImGui::DragFloat3("Triangle.v1", &triangle.vertices[1].x, 0.01f);
+		ImGui::DragFloat3("Triangle.v2", &triangle.vertices[2].x, 0.01f);
 		ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
 		ImGui::DragFloat("Segment.Diff", &segment.diff.x, 0.01f);
 		ImGui::DragFloat3("Camera.Translate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("Camera.Rotate", &cameraRotate.x, 0.01f);
-		plane.normal = Normalize(plane.normal);
 		ImGui::End();
 
 		///
